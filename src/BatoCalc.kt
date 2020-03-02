@@ -29,7 +29,7 @@ class BatoCalc {
                 }
             }catch(e: Exception){
                 println(e.message)
-                println(e.stackTraceString)
+                //println(e.stackTraceString)
             }
 
 

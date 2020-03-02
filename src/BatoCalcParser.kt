@@ -110,23 +110,31 @@ class BatoCalcParser{
                         when(trimmed[endIdx]) {
                             OP_PLUS -> {
                                 // unary operator
-                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().tokenType == TokenType.BRACKET){
+                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().subType == SubType.BRACKET_OPEN){
                                     ret.add(CalcToken(TokenType.OPERATOR, SubType.PLUS_UNARY))
                                 }else {
                                     ret.add(CalcToken(TokenType.OPERATOR, SubType.PLUS))
                                 }
                             }
                             OP_MINUS -> {
-                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().tokenType == TokenType.BRACKET){
+                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().subType == SubType.BRACKET_OPEN){
                                     ret.add(CalcToken(TokenType.OPERATOR, SubType.MINUS_UNARY))
                                 }else{
                                     ret.add(CalcToken(TokenType.OPERATOR, SubType.MINUS))
                                 }
                             }
                             OP_MULTIPLY -> {
+                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().subType == SubType.BRACKET_OPEN){
+                                    throw InvalidExpressionException()
+                                }
+
                                 ret.add(CalcToken(TokenType.OPERATOR, SubType.MULTIPLY))
                             }
                             OP_DIVIDE -> {
+                                if(ret.isEmpty() || ret.last().tokenType == TokenType.OPERATOR || ret.last().subType == SubType.BRACKET_OPEN){
+                                    throw InvalidExpressionException()
+                                }
+
                                 ret.add(CalcToken(TokenType.OPERATOR, SubType.DIVIDE))
                             }
                             OP_ASSIGN -> {
