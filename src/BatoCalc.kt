@@ -39,10 +39,11 @@ class BatoCalc {
     private fun doCommand(trimmed: String){
         when (trimmed) {
             "/help" -> {
-                println("The program calculates +/- operations.")
+                println("The program calculates +, -, *, / operations.")
                 println(" - /help : help message.")
                 println(" - /exit : exit calculator.")
                 println(" - [variable] = [int number|variable] : define variable or reassign to existing variable.")
+                println(" - /var : view list of variables")
                 println(" - Math expression : You can only use +/-, () and defined variable.")
                 println("                     usage) 3 + (5-7) + age ")
             }
@@ -63,24 +64,23 @@ class BatoCalc {
 
         // 2. evaluate expression
         val intValue = eval(trimmed)
-        println(intValue.toString())
-
-        // 3. If assignment exist, do assign
+        if(intValue != null) println(intValue.toString())
     }
 
-    private fun eval(trimmed: String): Int{
+    private fun eval(trimmed: String): Int?{
         // 1. tokenize
         val tokens = BatoCalcParser.tokenize(trimmed)
 
         // 2. infix to postfix
         val tokensPostfix = BatoCalcParser.infix2Postfix(tokens)
-        println(tokensPostfix.joinToString(","))
+        //println(tokensPostfix.joinToString(","))
 
         // 3. evaluate using stack
         return doCalc(tokensPostfix)
     }
 
-    private fun doCalc(tokensPostfix: List<CalcToken>): Int {
+    private fun doCalc(tokensPostfix: List<CalcToken>): Int? {
+        var isAssignment: Boolean = false
         val valueStack = Stack<CalcToken>()
         //val valueStack = Stack<Int>()
 
@@ -122,9 +122,10 @@ class BatoCalc {
                             if(opr1.subType != SubType.VARIABLE) throw InvalidAssignmentException()
                             val rExpressionValue = getTokenValue(opr2)
                             variablesMap[opr1.value] = rExpressionValue
-                            println("${opr1.value} = $rExpressionValue")
+                            //println("${opr1.value} = $rExpressionValue")
 
                             valueStack.push(CalcToken(TokenType.OPERAND, rExpressionValue.toString(), SubType.NUMBER))
+                            isAssignment = true
                         }
                         else -> throw InvalidExpressionException()
                     }
@@ -142,7 +143,10 @@ class BatoCalc {
         //return valueStack.pop().value
         val ret = valueStack.pop()
         if(valueStack.count() > 0) throw InvalidExpressionException()
-        return ret.value.toInt()
+
+        return if(isAssignment) null
+        else getTokenValue(ret)
+        //else ret.value.toInt()
     }
 
     private fun getTokenValue(token: CalcToken): Int {

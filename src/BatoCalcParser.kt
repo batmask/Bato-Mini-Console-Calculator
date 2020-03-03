@@ -55,7 +55,7 @@ data class CalcToken(val tokenType: TokenType = TokenType.NONE, var value: Strin
 class BatoCalcParser{
 
     companion object{
-        private val VALID_COMMAND: Set<Char> = setOf<Char>('/')
+        private val VALID_COMMAND: Char = '/'
         private val VALID_OPERATOR_ARITHMETIC: Set<Char> = setOf<Char>('-', '+', '*', '/', '=')
         private val VALID_OPERATOR_BRACKET: Set<Char> = setOf<Char>('(', ')')
         //private val VALID_OPERATOR_ASSIGN: Set<Char> = setOf<Char>('=')
@@ -77,10 +77,10 @@ class BatoCalcParser{
             val trimmed = trim(expression) ?: return InputType.NONE
 
             return when(trimmed.first()){
-                in VALID_COMMAND                -> InputType.COMMAND
+                VALID_COMMAND                   -> InputType.COMMAND
                 in VALID_OPERATOR_ARITHMETIC    -> InputType.MATH_EXPRESSION
-                in VALID_OPERATOR_BRACKET        -> InputType.MATH_EXPRESSION
-                //in VALID_OPERATOR_ASSIGN        -> InputType.MATH_EXPRESSION
+                in VALID_OPERATOR_BRACKET       -> InputType.MATH_EXPRESSION
+                //in VALID_OPERATOR_ASSIGN      -> InputType.MATH_EXPRESSION
                 in VALID_OPERAND_NUMBER         -> InputType.MATH_EXPRESSION
                 in VALID_OPERAND_SMALL_LATIN    -> InputType.MATH_EXPRESSION
                 in VALID_OPERAND_BIG_LATIN      -> InputType.MATH_EXPRESSION
@@ -233,6 +233,9 @@ class BatoCalcParser{
                             SubType.BRACKET_CLOSE -> {
                                 var done = false
                                 do {
+                                    // close parenthesis must pair with open parenthesis.
+                                    if(opStack.isEmpty()) throw InvalidExpressionException()
+
                                     val op = opStack.pop()
                                     if(op.subType == SubType.BRACKET_OPEN){
                                         done = true
