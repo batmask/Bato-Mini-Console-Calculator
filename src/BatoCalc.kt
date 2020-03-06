@@ -1,8 +1,11 @@
 package calculator
 
+import java.math.BigInteger
+
 class BatoCalc {
     private var inputType = InputType.NONE
-    private val variablesMap = mutableMapOf<String, Int>()
+    //private val variablesMap = mutableMapOf<String, Int>()
+    private val variablesMap = mutableMapOf<String, BigInteger>()
     private var isExit = false
 
     fun calcLoop() {
@@ -67,7 +70,7 @@ class BatoCalc {
         if(intValue != null) println(intValue.toString())
     }
 
-    private fun eval(trimmed: String): Int?{
+    private fun eval(trimmed: String): BigInteger?{
         // 1. tokenize
         val tokens = BatoCalcParser.tokenize(trimmed)
 
@@ -79,7 +82,7 @@ class BatoCalc {
         return doCalc(tokensPostfix)
     }
 
-    private fun doCalc(tokensPostfix: List<CalcToken>): Int? {
+    private fun doCalc(tokensPostfix: List<CalcToken>): BigInteger? {
         var isAssignment: Boolean = false
         val valueStack = Stack<CalcToken>()
         //val valueStack = Stack<Int>()
@@ -93,7 +96,7 @@ class BatoCalc {
                         }
                         SubType.MINUS_UNARY -> {
                             val opr1 = valueStack.pop()
-                            valueStack.push(CalcToken(TokenType.OPERAND, (-1 * getTokenValue(opr1)).toString(), SubType.NUMBER))
+                            valueStack.push(CalcToken(TokenType.OPERAND, (-getTokenValue(opr1)).toString(), SubType.NUMBER))
                         }
                         SubType.PLUS -> {
                             val opr2 = valueStack.pop()
@@ -149,10 +152,11 @@ class BatoCalc {
         //else ret.value.toInt()
     }
 
-    private fun getTokenValue(token: CalcToken): Int {
+    private fun getTokenValue(token: CalcToken): BigInteger {
         return when(token.subType) {
             SubType.NUMBER -> {
-                token.value.toInt()
+                //token.value.toInt()
+                BigInteger(token.value)
             }
             SubType.VARIABLE -> {
                 if(variablesMap.contains(token.value)){
