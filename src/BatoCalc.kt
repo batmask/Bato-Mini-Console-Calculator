@@ -1,11 +1,11 @@
 package calculator
 
-import java.math.BigInteger
+import java.math.BigDecimal
 
 class BatoCalc {
     private var inputType = InputType.NONE
     //private val variablesMap = mutableMapOf<String, Int>()
-    private val variablesMap = mutableMapOf<String, BigInteger>()
+    private val variablesMap = mutableMapOf<String, BigDecimal>()
     private var isExit = false
 
     fun calcLoop() {
@@ -70,7 +70,7 @@ class BatoCalc {
         if(intValue != null) println(intValue.toString())
     }
 
-    private fun eval(trimmed: String): BigInteger?{
+    private fun eval(trimmed: String): BigDecimal?{
         // 1. tokenize
         val tokens = BatoCalcParser.tokenize(trimmed)
 
@@ -82,7 +82,7 @@ class BatoCalc {
         return doCalc(tokensPostfix)
     }
 
-    private fun doCalc(tokensPostfix: List<CalcToken>): BigInteger? {
+    private fun doCalc(tokensPostfix: List<CalcToken>): BigDecimal? {
         var isAssignment: Boolean = false
         val valueStack = Stack<CalcToken>()
         //val valueStack = Stack<Int>()
@@ -152,11 +152,11 @@ class BatoCalc {
         //else ret.value.toInt()
     }
 
-    private fun getTokenValue(token: CalcToken): BigInteger {
+    private fun getTokenValue(token: CalcToken): BigDecimal {
         return when(token.subType) {
             SubType.NUMBER -> {
                 //token.value.toInt()
-                BigInteger(token.value)
+                BigDecimal(token.value)
             }
             SubType.VARIABLE -> {
                 if(variablesMap.contains(token.value)){
